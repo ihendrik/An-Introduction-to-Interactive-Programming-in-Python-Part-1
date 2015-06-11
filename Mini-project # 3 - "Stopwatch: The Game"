@@ -1,0 +1,71 @@
+# template for "Stopwatch: The Game"
+
+# define global variables
+import simplegui
+
+time=170
+interval =100 #0.1 seconds
+score=0
+total=0
+timer_run=False
+
+# define helper function format that converts time
+# in tenths of seconds into formatted string A:BC.D
+def format(t):
+    A=t/600
+    t=t-A*600
+    B=t/100
+    t=t-B*100
+    C=t/10
+    t=t-C*10
+    D=t
+    t=str(A)+":"+str(B)+str(C)+"."+str(D)
+    return t
+    
+# define event handlers for buttons; "Start", "Stop", "Reset"
+def start():
+    global timer_run
+    timer_run=True
+    timer.start()
+
+
+def stop():
+    global timer_run, total, score
+    if(timer_run):
+        total+=1
+        if((time-((time-(time/600))/100)*100)-((time-((time-(time/600))/100)*100)/10)*10<1):
+            score+=1
+        timer_run=False
+    timer.stop()
+
+def reset():
+    global time, total, score
+    global timer_run
+    timer_run=False
+    time=0
+    total=0
+    score=0
+    timer.stop()
+
+
+# define event handler for timer with 0.1 sec interval
+def timer_handler():
+    global time
+    time+=1
+
+# define draw handler
+def draw(canvas):
+    canvas.draw_text(format(time),(100,100),24,'White')
+    canvas.draw_text(str(score)+"/"+str(total),(150,10),14,'Green')
+    
+# create frame
+frame = simplegui.create_frame("Guess the numbet", 200,200)
+# register event handlers
+frame.add_button("Start", start,200)
+frame.add_button("Stop", stop, 200)
+frame.add_button("Reset", reset, 200)
+frame.set_draw_handler(draw)
+timer = simplegui.create_timer(interval, timer_handler)
+# start frame
+frame.start()
+# Please remember to review the grading rubric
